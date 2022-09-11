@@ -7,29 +7,19 @@
 #include <VL53L0X.h>
 #include <LiquidCrystal_I2C.h>
 
-
-
-
-
-
 #define UART_INTERVAL   15    //  Интервал между сообщениями, которые передаются компьютеру через UART шину (мс)
 #define PARSE_AMOUNT    4      //  Число значений в массиве, которые хотим получить из пакета с настройками 4 шт (режим, параметр1, параметр2, параметр3)
 #define INPUT_AMOUNT    20     //  Максимальное количество символов в пакете, который идёт в сериал 
 #define MAX_RANGE       1000 
 
-
-
-
-
-
-class Locator{
-  
+class Locator{  
   public:
+  
   Locator(uint8_t serPin,uint8_t beepPin){
       servoPin  =  serPin;
-      beeperPin =  beepPin; 
-        
+      beeperPin =  beepPin;     
   }
+  
   void modeSet();
   void StartMode1();
   void StartMode2();
@@ -40,9 +30,7 @@ class Locator{
   void laser_init();
   void math_mode();
   
-  
   uint8_t curMode;   //  Текущий режим работы устройства
-
   uint32_t lastTime1; //  Переменные для реализации таймеров запуска функций.  
   uint32_t lastTime2; //  lastTime1 (мкс) для интегрирования по периоду,    lastTime2 (мс) для отправки по uart сообщений
   
@@ -52,7 +40,7 @@ class Locator{
   uint8_t maxAngle,minAngle,curAngle,dAngle;
 
   private:
-
+  
     void uartParse();
     void uart_send(int data_to_send);
     void stopCheck();
@@ -75,27 +63,6 @@ class Locator{
     uint8_t servoPin;
     uint8_t beeperPin;
 
-
-  
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 #endif //LOCATOR_LIB_H

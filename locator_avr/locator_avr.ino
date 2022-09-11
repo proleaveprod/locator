@@ -17,9 +17,7 @@ void setup() {
   locator.welcome();
 
   locator.modeSet();
-  
   //locator.math_mode();
-
 }
 
 void loop() {             

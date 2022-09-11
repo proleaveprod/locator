@@ -6,13 +6,11 @@ from tkinter import *
 from PIL import Image
 from pystray import MenuItem, Menu, Icon
 from pycaw.pycaw import AudioUtilities, ISimpleAudioVolume
-
 import sys
 import serial
 import time
 import re
 import math
-
 
 recieve_flag=0
 mode = 0
@@ -33,20 +31,19 @@ maxSpeed = 0
 curSpeed = 0.0
 filVal = 0.0
 
-
 def xc_get(fi,r):
     global R,graph_w_center
     fii = (math.pi/180)*fi
     x = R*r*math.cos(fii)
     _xc = graph_w_center + x
     return _xc
+
 def yc_get(fi,r):
     global R,graph_h_center
     fii = (math.pi/180)*fi
     y = R*r*math.sin(fii)
     _yc = graph_h_center - y
     return _yc
-
 
 def esc_click(event):
     global recieve_flag
@@ -61,6 +58,7 @@ def esc_click(event):
         recieve_flag=0
         mode1StartStopButton['text']="Старт"
         mode3StartStopButton['text']="Старт"
+        
 def serial_ports():                                     #Функция сканирования COM-портов
     if sys.platform.startswith('win'):
         ports = ['COM%s' % (i + 1) for i in range(256)]
@@ -82,6 +80,7 @@ def serial_ports():                                     #Функция скан
             pass
 
     return result
+
 def connect_click():                #Обработчик нажатия кнопки "Подключиться/Отключиться"
 
     global recieve_flag
@@ -123,6 +122,7 @@ def connect_click():                #Обработчик нажатия кно�
         #sys.exit()
         #connect_button.configure(text = 'Подключиться')
         #send_button.configure(state='disable',text="Отправка настроек и запуск регулятора")
+        
 def ACmenu():
 
     global mode
@@ -136,8 +136,6 @@ def ACmenu():
     print("ACmenu")
 
     #app.geometry('{}x{}+{}+{}'.format(1200,1000,0,0))
-
-
     #labelTop.destroy()
     #settingsLabel.destroy()
     #comboComs.destroy()
@@ -151,6 +149,7 @@ def ACmenu():
     modeSelectButton.place(x=centerX-600//2,y=750,w=600,h=100)
     modeMyInfo.place(x=centerX*2-500,y=35,h=70,w=500)
     app.after(500, lambda: modeMyInfo.place_forget())
+    
 def modeSelect():
     mode = curMode.get()
     if mode==1:
@@ -159,6 +158,7 @@ def modeSelect():
         _mode2()
     elif mode==3:
         _mode3()
+        
 def _mode1():
     print("mode1")
     global mode,max_range
@@ -202,6 +202,7 @@ def _mode1():
         mode1graph.create_arc(DArc+DArcStep*i,DArcStep*i,graph_w-DArc-DArcStep*i,(graph_h-50)*2-DArcStep*i, start=0,extent=180, outline=fg_green_format, width=wid)
     mode1ScaleMinFi_update(int(mode1ScaleMinFi.get()))
     mode1ScaleMaxFi_update(int(mode1ScaleMaxFi.get()))
+    
 def mode1connect():
     global  recieve_flag,max_range
     minFi = mode1ScaleMinFi.get()
@@ -268,6 +269,7 @@ def mode1connect():
         recieve_flag=0
         uart.write(b's')
         mode1StartStopButton['text']="Старт"
+        
 def mode1_recieve():
     global recieve_flag,lastTime,_range,_angle,max_range,_lastAngle
     times = time.time()
@@ -303,6 +305,7 @@ def mode1_recieve():
             _lastAngle=_angle
             app.after(updateRecieveTime, lambda: mode1_recieve())
             return
+        
 def _mode2():
     print("mode2")
     global mode
@@ -324,6 +327,7 @@ def _mode2():
 
     curRangeLabel = tk.Label(app,text="Расстояние до объекта: ", font=(font_format, 25, 'bold'),bg=bg_format,fg=fg_format)
     #curRangeLabel.grid(row=2,column=1,columnspan=2)
+    
 def mode2measure():
     curAngle = mode2ScaleAngle.get()
     mode2CurAngle['text'] = str(curAngle)+' °'
@@ -384,9 +388,6 @@ def _mode3():
             a=1
         mode3graph.create_line(0,i*(window_height/12.5)+(window_height-window_height*0.8), window_width/15,i*(window_height/12.5)+(window_height-window_height*0.8),fill='red',width=a)
 
-
-
-
 def mode3connect():
     global  recieve_flag,max_range,maxSpeed
     maxSpeed = int(maxSentry.get())
@@ -439,6 +440,7 @@ def mode3connect():
         recieve_flag=0
         uart.write(b's')
         mode3StartStopButton['text']="Старт"
+        
 def mode3_recieve():
     global recieve_flag,lastTime,maxSpeed,curSpeed
     times = time.time()
@@ -454,8 +456,7 @@ def mode3_recieve():
                 #curSpeed = 1.158
                 if int(data[0])==0:
                     curSpeed=curSpeed*(-1)
-
-
+                    
             except:
                 0
             #print('speed=',curSpeed)
@@ -481,28 +482,28 @@ def speedFilter(newVal):
         filVal = filVal + (newVal-filVal)*1
     return filVal
 
-
-
 def create_line_radar(ugol):
     xc = xc_get(ugol,1)
     yc = yc_get(ugol,1)
     mode1graph.create_line(graph_w_center,graph_h_center,xc,yc,width=2,fill=fg_green_format)
+    
 def mode1ScaleMinFi_update(ugol):
     xc = xc_get(180-int(ugol),1)
     yc = yc_get(180-int(ugol),1)
     mode1graph.delete('minFiLine')
     mode1graph.create_line(graph_w_center,graph_h_center,xc,yc,width=3,fill='red',tag='minFiLine')
+    
 def mode1ScaleMaxFi_update(ugol):
     xc = xc_get(180-int(ugol),1)
     yc = yc_get(int(ugol),1)
     mode1graph.delete('maxFiLine')
     mode1graph.create_line(graph_w_center,graph_h_center,xc,yc,width=3,fill='red',tag='maxFiLine')
+    
 def mode1RadarLine_update(ugol):
     xc = xc_get(180-int(ugol),1)
     yc = yc_get(180-int(ugol),1)
     mode1graph.delete('radarLine')
     mode1graph.create_line(graph_w_center,graph_h_center,xc,yc,width=3,fill='lightgreen',tag='radarLine')
-
 
 #____Создание_окна_______
 com_ports = serial_ports()              # вытаскиваем в переменную все работающие ком порты
@@ -530,12 +531,12 @@ centerY = app.winfo_screenheight()//2
 app.geometry('{}x{}+{}+{}'.format(window_width,window_height,w,h))
 app.resizable(False, False)
 
-
 #______________________________________________________________________________ОКНО ПОДКЛЮЧЕНИЯ УСТРОЙСТВА_____________________________________________________________________________________________________
 frame_connect = Frame(app,bg=bg_format)
 settingsLabel = tk.Label(frame_connect,text="Подключение устройства",font=(font_format,16,'bold'),fg='red',bg=bg_format)
 labelTop = tk.Label(frame_connect,text = "Выберите COM-порт:",font=(font_format, 10, 'bold'),bg = bg_format,fg = fg_format)
 connect_button = tk.Button(frame_connect,text="Подключиться", padx="20", pady="8", font=(font_format, 10, 'bold'),fg= 'red', command=connect_click, bg = bg_format)
+
 #______________________________________________________________________________________ОКНО ВЫБОРА РЕЖИМА РАБОТЫ УСТРОЙСТВА______________________________________________________________________________________
 frame_menu = Frame(app, bg=bg_format) # root можно не указывать
 modeLabel = tk.Label(frame_menu,text="Выбор режима работы локатора:",font=(font_format,30,'bold'),fg='red',bg=bg_format)
@@ -591,6 +592,7 @@ mode1CurRange   = tk.Label(mode1graph,text="0 мм",font=(font_format,15,'bold')
 mode1CurAngle   = tk.Label(mode1graph,text="0 °",font=(font_format,15,'bold'),bg=bg_format,fg='red',justify=LEFT)
 maxRentry = Entry(mode1graph, width=4,bg=bg_format,fg='red',font=(font_format,15,'bold'),selectforeground=bg_format)
 maxRentry.insert(0,"1000")
+
 #______________________________________________________________________________ОКНО РЕЖИМА ОДИНОЧНЫХ ИЗМЕРЕНИЙ_№2______________________________________________________________________________________________
 frame_mode2 = Frame(app, bg=bg_format) # root можно не указывать
 mode2Label  = tk.Label(frame_mode2,text="Режим одиночных измерений", font=(font_format, 50, 'bold'),bg=bg_format,fg='red')
@@ -604,6 +606,7 @@ mode2ScaleAngle.set(90)
 mode2ScaleLabel = tk.Label(frame_mode2,text="Задание угла оси локатора:",font=(font_format,25),bg=bg_format,fg='red')
 
 measureButton = tk.Button(frame_mode2,text="Измерение", padx=20, pady=8, font=(font_format, 30, 'bold'),fg= 'red', command=mode2measure, bg = bg_format,width=40,height=10)
+
 #______________________________________________________________________________ОКНО РЕЖИМА ИЗМЕРИТЕЛЯ СКОРОСТИ №3______________________________________________________________________________________________
 frame_mode3 = Frame(app, bg=bg_format)
 mode3Label  = tk.Label(frame_mode3,text="Режим измерения скорости", font=(font_format, 50, 'bold'),bg=bg_format,fg='red')
@@ -621,8 +624,6 @@ mode3Speedometr = ttk.Progressbar(frame_mode3, orient="vertical", mode="determin
 
 mode3graph = Canvas(frame_mode3, width=window_width/15, height=window_height*4.2, bg=bg_format,bd=0, highlightthickness=0, relief='ridge')
 
-
-
 #Пакуем первое окно_________________________________________________________________________________________________________________________________
 frame_connect.place(x=0,y=0,w=window_width,h=window_height)
 settingsLabel.pack()
@@ -639,7 +640,6 @@ else:
     labelComsError.pack()
     connect_button.configure(state = 'disabled')
 connect_button.pack(expand=1)
-
 
 #_____________________________________________________________________________________________________________________________________________________
 app.bind('<Escape>', esc_click)
