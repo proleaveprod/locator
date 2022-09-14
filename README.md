@@ -1,4 +1,4 @@
-#Graduation project on the development of an optical radar layout. Chervinko Evgeniy, SPBSUT, 2022.                                                              
+# Embedded project on the development of an optical radar layout. Chervinko Evgeniy, SPBSUT, 2022.                                                              
 
 #Contacts:                                                                                                                             
 #email:      proleaveprod@gmail.com                                                                                                                             
